@@ -5,7 +5,7 @@ if(NOT EXISTS /usr/lib/libcomplex_bessel.so)
 						WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 		execute_process(COMMAND mkdir complex_bessel_lib
 						WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-		execute_process(COMMAND bash build.sh "${PROJECT_SOURCE_DIR}/complex_bessel_lib"
+		execute_process(COMMAND bash ../cmake/functions/complex_bessel_build.fix.sh "${PROJECT_SOURCE_DIR}/complex_bessel_lib"
 						WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/complex_bessel")
 		execute_process(COMMAND make install
 						WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/complex_bessel/build")
@@ -38,4 +38,3 @@ else()
 					WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 	endif()
 endif()
-

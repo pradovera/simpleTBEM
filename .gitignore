@@ -1,5 +1,4 @@
 # Default ignored files
-.idea/*
 bin
 cmake-build-debug
 cmake-build-release
@@ -8,13 +7,3 @@ doxygen/generated_doc
 complex_bessel_lib
 include/complex_bessel*
 arpackpp_lib
-data/*.dat
-data/*.txt
-data_bckp
-figures/*.pdf
-plotting_scripts/.idea
-plotting_scripts/venv
-plotting_scripts/__pycache__/*
-plotting_scripts/evtable.py
-plotting_scripts/miesolution.py
-plotting_scripts/miesolution.zip
