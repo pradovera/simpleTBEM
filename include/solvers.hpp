@@ -4,7 +4,8 @@
  * for the Dirichlet and the Neumann problem as well as a direct second kind
  * BIE for the Helmholtz transmission problem.
  *
- * This File is a part of the HelmholtzTransmissionBEM
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef SOLVERSHPP
@@ -70,6 +71,37 @@ namespace tp {
      * The solver uses the lowest order BEM spaces for computation.
      */
     namespace direct_second_kind {
+        /**
+         * This function returns the matrices of the Helmholtz transmission problem
+         * on boundary given by \p mesh. The wavenumber is set by \p k and th refraction
+         * indices by \p c_o and \p c_i. The Galerkin matrix entries are computed
+         * with a quadrature rule defined by the parameter \p order.
+         * @param mesh mesh of the boundary on which to compute BIOs
+         * @param order order of qudrature rule for matrix entries
+         * @param k wavenumber
+         * @param c_o refraction index outer domain
+         * @param c_i refraction index on inner domain
+         * @return tuple of matrices
+         */
+        std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrix(const ParametrizedMesh &mesh,
+                                                              const unsigned order,
+                                                              const double k,
+                                                              const double c_o,
+                                                              const double c_i);
+        /**
+         * This function returns the vector of the Helmholtz transmission problem
+         * on boundary given by \p mesh for an incoming wave defined by \p u_inc_dir and
+         * \p u_inc_neu. The wavenumber is set by \p k and th refraction indeces by
+         * \p c_o and \p c_i. The Galerkin matrix entries are compute with a quadrature rule
+         * defined by the parameter \p order.
+         * @param mesh mesh of the boundary on which to compute BIOs
+         * @param u_inc_dir Dirichlet data of incoming wave
+         * @param u_inc_neu Neumann data of incoming wave
+         * @return Dirichlet and Neumann data of incoming wave
+         */
+        Eigen::VectorXcd vector(const ParametrizedMesh &mesh,
+                                const std::function<std::complex<double>(double, double)> u_inc_dir,
+                                const std::function<std::complex<double>(double, double)> u_inc_neu);
         /**
          * This function returns the solution to the Helmholtz transmission problem
          * on boundary given by \p mesh for an incoming wave defined by \p u_inc_dir and
