@@ -5,7 +5,8 @@
  *        Double Layer BIO for the Helmholtz kernel,
  *        using common and composite Gauss-Legendre quadrature rules.
  *
- * This File is a part of the HelmholtzTransmissionProblemBEM library.
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef DOUBLELAYERHPP

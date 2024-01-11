@@ -2,8 +2,8 @@
  * \file abstract_bem_space.hpp
  * \brief This file declares an abstract class representing a BEM Space
  *
- * This File is a part of the HelmholtzTransmissionProblem Library
- * It was adapted from the 2D-Parametric BEM package
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef ABSTRACTBEMSPACEHPP

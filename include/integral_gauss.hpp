@@ -1,5 +1,6 @@
 /**
- * This File is a part of the 2D-Parametric BEM package
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef INTEGRALGAUSSHPP

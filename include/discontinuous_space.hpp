@@ -4,7 +4,8 @@
  *        and represents discontinuous spaces of the form \f$S^{-1}_{p}\f$
  *        , using full template specialization.
  *
- * This File is a part of the 2D-Parametric BEM package
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef DISCONTSPACEHPP
@@ -69,6 +70,7 @@
             unsigned coeffs_size = getSpaceDim(mesh.getNumPanels());
             Eigen::VectorXcd coeffs(coeffs_size);
             PanelVector panels = mesh.getPanels();
+            #pragma omp parallel for
             // Filling the coefficients
             for (unsigned i = 0; i < coeffs_size; ++i) {
                 Eigen::Vector2d pt = panels[i]->operator[](0.);

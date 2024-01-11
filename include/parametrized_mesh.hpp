@@ -3,7 +3,8 @@
  * \brief This file declares a class for representing a mesh comprising
  *        of panels in the form of parametrized curves.
  *
- *  This File is a part of the 2D-Parametric BEM package
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef PARAMETRIZEDMESHHPP

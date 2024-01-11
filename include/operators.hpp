@@ -4,10 +4,8 @@
  * to find the minimas in the smallest singular value
  * of the Helmholtz transmission problem solutions operator.
  *
- * This File is a part of the HelmholtzTransmissionProblemBEM library.
- * It incoporates some functions taken from the book
- * "Numerical Recipes in C".
- * These have been marked in their documentation.
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 #ifndef OPERATORS_HPP
 #define OPERATORS_HPP

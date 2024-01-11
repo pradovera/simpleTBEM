@@ -3,7 +3,8 @@
  * \brief This file declares the class for representing parametrization
  *        of a line segment in 2D.
  *
- *  This File is a part of the 2D-Parametric BEM package
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef PARAMETRIZEDLINEHPP

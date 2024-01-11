@@ -22,6 +22,10 @@
 //
 // Source: http://people.sc.fsu.edu/~jburkardt/cpp_src/gen_laguerre_rule/gen_laguerre_rule.html
 //****************************************************************************
+/**
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
+ **/
 
 # include <iostream>
 # include <fstream>

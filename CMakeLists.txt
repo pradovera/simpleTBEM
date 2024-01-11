@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(HelmholtzTransmissionProblem)
+project(simpleTBEM)
 
 
 ###########################################################################
@@ -40,7 +40,7 @@ unset(CMDL CACHE)
 # COMPILATION FLAGS
 ###########################################################################
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS "-O3 -fopenmp")
 
 # IGNORE WARNINGS
 ###########################################################################
@@ -68,7 +68,5 @@ include(${PROJECT_SOURCE_DIR}/cmake/functions/Getcomplex_bessel.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/functions/Getarpackpp.cmake)
 
 # ADD SUBDIRECTORIES
-add_subdirectory(doxygen)
 add_subdirectory(examples)
 add_subdirectory(source)
-add_subdirectory(test)

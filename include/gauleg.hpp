@@ -3,8 +3,8 @@
  * \brief This file defines the function to evaluate points and weights for
  *        Gauss Legendre quadrature rule.
  *
- * This File is a part of the HelmholtzTransmissionBEM.
- * It has been adapted from the 2D-Parametric BEM package.
+ * This file is a part of the simpleTBEM library.
+ * It was adapted from the HelmholtzTransmissionProblem library.
  */
 
 #ifndef GAULEGHPP

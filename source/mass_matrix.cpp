@@ -78,6 +78,7 @@
             // Panel oriented assembly
             QuadRule GaussQR = getGaussQR(N,0.,1.);
             QuadRule CGaussQR = getCGaussQR(N);
+            #pragma omp parallel for
             for (unsigned int i = 0; i < numpanels; ++i) {
                 for (unsigned int j = 0; j < numpanels; ++j) {
                     // Getting the interaction matrix for the pair of panels i and j
