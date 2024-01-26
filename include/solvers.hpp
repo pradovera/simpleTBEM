@@ -81,13 +81,15 @@ namespace tp {
          * @param k wavenumber
          * @param c_o refraction index outer domain
          * @param c_i refraction index on inner domain
+         * @param rescale_neumann whether to rescale Neumann portions by wavenumber
          * @return tuple of matrices
          */
         std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrix(const ParametrizedMesh &mesh,
                                                               const unsigned order,
                                                               const double k,
                                                               const double c_o,
-                                                              const double c_i);
+                                                              const double c_i,
+                                                              bool rescale_neumann = false);
         /**
          * This function returns the vector of the Helmholtz transmission problem
          * on boundary given by \p mesh for an incoming wave defined by \p u_inc_dir and
@@ -97,11 +99,15 @@ namespace tp {
          * @param mesh mesh of the boundary on which to compute BIOs
          * @param u_inc_dir Dirichlet data of incoming wave
          * @param u_inc_neu Neumann data of incoming wave
+         * @param k wavenumber
+         * @param rescale_neumann whether to rescale Neumann portions by wavenumber
          * @return Dirichlet and Neumann data of incoming wave
          */
         Eigen::VectorXcd vector(const ParametrizedMesh &mesh,
                                 const std::function<std::complex<double>(double, double)> u_inc_dir,
-                                const std::function<std::complex<double>(double, double)> u_inc_neu);
+                                const std::function<std::complex<double>(double, double)> u_inc_neu,
+                                const double k,
+                                bool rescale_neumann = false);
         /**
          * This function returns the solution to the Helmholtz transmission problem
          * on boundary given by \p mesh for an incoming wave defined by \p u_inc_dir and
@@ -115,6 +121,7 @@ namespace tp {
          * @param k wavenumber
          * @param c_o refraction index outer domain
          * @param c_i refraction index on inner domain
+         * @param rescale_neumann whether to rescale Neumann portions by wavenumber
          * @return Dirichlet and Neumann data of resulting wave
          */
         Eigen::VectorXcd solve(const ParametrizedMesh &mesh,
@@ -123,7 +130,8 @@ namespace tp {
                                const unsigned order,
                                const double k,
                                const double c_o,
-                               const double c_i);
+                               const double c_i,
+                               bool rescale_neumann = false);
     } // namespace direct_second_kind
 } // namespace tp
 #endif // DIRICHLETHPP

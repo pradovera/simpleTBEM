@@ -69,7 +69,8 @@ namespace tp {
                                const unsigned order,
                                const double k,
                                const double c_o,
-                               const double c_i) {
+                               const double c_i,
+                               bool rescale_neumann) {
             // define number of panels for convenience
             int numpanels = mesh.getNumPanels();
             // space used for interpolation of Dirichlet data
@@ -89,32 +90,39 @@ namespace tp {
                     single_layer_helmholtz::GalerkinMatrix(mesh, cont_space, order, k, c_i);
             Eigen::MatrixXcd M_cont =
                     mass_matrix::GalerkinMatrix(mesh,cont_space,cont_space,order);
+            if ( rescale_neumann ) {
+                V_o = V_o * k; V_i = V_i * k;
+                //TODO: fix behavior for k=0
+                W_o = W_o / k; W_i = W_i / k;
+            }
+            
             // Build lhs matrix
             Eigen::MatrixXcd A(K_o.rows() + W_o.rows(), K_o.cols() + V_o.cols());
-            A.block(0, 0, K_o.rows(), K_o.cols()) = (-K_o + K_i)+M_cont;
-            A.block(0, K_o.cols(), V_o.rows(), V_o.cols()) = (V_o-V_i);
-            A.block(K_o.rows(), 0, W_o.rows(), W_o.cols()) = W_o-W_i;
-            A.block(K_o.rows(), K_o.cols(), K_o.cols(), K_o.rows()) =
-                    (K_o-K_i).transpose()+M_cont;
+            A.block(0, 0, K_o.rows(), K_o.cols()) = -K_o+K_i+M_cont;// D-D block
+            A.block(0, K_o.cols(), V_o.rows(), V_o.cols()) = V_o-V_i;// D-N block
+            A.block(K_o.rows(), 0, W_o.rows(), W_o.cols()) = W_o-W_i;// N-D block
+            A.block(K_o.rows(), K_o.cols(), K_o.cols(), K_o.rows()) = (K_o-K_i).transpose()+M_cont;// N-N block
             // Build rhs matrix
             Eigen::MatrixXcd A_o(K_o.rows() + W_o.rows(), K_o.cols() + V_o.cols());
-            A_o.block(0, 0, K_o.rows(), K_o.cols()) = -K_o + 0.5*M_cont;
-            A_o.block(0, K_o.cols(), V_o.rows(), V_o.cols()) = V_o;
-            A_o.block(K_o.rows(), 0, W_o.rows(), W_o.cols()) = W_o;
-            A_o.block(K_o.rows(), K_o.cols(), K_o.cols(), K_o.rows()) =
-                    K_o.transpose()+0.5*M_cont;
+            A_o.block(0, 0, K_o.rows(), K_o.cols()) = -K_o+0.5*M_cont;// D-D block
+            A_o.block(0, K_o.cols(), V_o.rows(), V_o.cols()) = V_o;// D-N block
+            A_o.block(K_o.rows(), 0, W_o.rows(), W_o.cols()) = W_o;// N-D block
+            A_o.block(K_o.rows(), K_o.cols(), K_o.cols(), K_o.rows()) = K_o.transpose()+0.5*M_cont;// N-N block
             return std::make_tuple(A, A_o);
         }
         Eigen::VectorXcd vector(const ParametrizedMesh &mesh,
                                const std::function<complex_t(double, double)> u_inc_dir,
-                               const std::function<complex_t(double, double)> u_inc_neu) {
+                               const std::function<complex_t(double, double)> u_inc_neu,
+                               const double k,
+                               bool rescale_neumann) {
             // define number of panels for convenience
             int numpanels = mesh.getNumPanels();
             // space used for interpolation of Dirichlet data
             ContinuousSpace<1> cont_space;
             // Build vectors from incoming wave data for right hand side
-            Eigen::VectorXcd u_inc_dir_N = cont_space.Interpolate_helmholtz(u_inc_dir, mesh);
-            Eigen::VectorXcd u_inc_neu_N = cont_space.Interpolate_helmholtz(u_inc_neu, mesh);
+            Eigen::VectorXcd u_inc_dir_N = cont_space.Interpolate_helmholtz(u_inc_dir, mesh);// D block
+            Eigen::VectorXcd u_inc_neu_N = cont_space.Interpolate_helmholtz(u_inc_neu, mesh);// N block
+            if ( rescale_neumann ) u_inc_neu_N = u_inc_neu_N / k;
             Eigen::VectorXcd u_inc_N(2*numpanels);
             u_inc_N << u_inc_dir_N, u_inc_neu_N;
             return u_inc_N;
@@ -125,13 +133,14 @@ namespace tp {
                                const unsigned order,
                                const double k,
                                const double c_o,
-                               const double c_i) {
+                               const double c_i,
+                               bool rescale_neumann) {
             // define number of panels for convenience
             int numpanels = mesh.getNumPanels();
             // Build matrices for solving linear system of equations
-            std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrices = matrix(mesh, order, k, c_o, c_i);
+            std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrices = matrix(mesh, order, k, c_o, c_i, rescale_neumann);
             // compute right hand side
-            Eigen::VectorXcd u_inc_N = vector(mesh, u_inc_dir, u_inc_neu);
+            Eigen::VectorXcd u_inc_N = vector(mesh, u_inc_dir, u_inc_neu, k, rescale_neumann);
             // Solving for coefficients
             Eigen::HouseholderQR<Eigen::MatrixXcd> dec(std::get<0>(matrices));
             Eigen::VectorXcd sol = dec.solve(std::get<1>(matrices) * u_inc_N);

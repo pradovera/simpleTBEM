@@ -9,7 +9,9 @@
  * /path/to/solver \<shape flag\>
  *      \<shape parameters\> \<refraction inside\>
  *      \<wavenumber\> \<source angle\> \<number of panels\>
- *      \<order of quadrature rule\> \<outputfile\>
+ *      \<order of quadrature rule\>
+ *      \<whether to rescale neumann part by wavenumber\>
+ *      \<outputfile\>
  * </tt>
  * SHAPE FLAG may be "circle", "square", or "star".
  *   for "circle", the SHAPE PARAMETERS are the radius;
@@ -42,6 +44,9 @@ int main(int argc, char** argv) {
     // define number of panels and order of quadrature rule
     unsigned numpanels = atoi(argv[6]);
     unsigned order = atoi(argv[7]);
+
+    // define whether to rescale neumann part by wavenumber
+    bool rescale_neumann = atoi(argv[8]) != 0;
 
     // define shape
     std::string shape = argv[1];
@@ -100,11 +105,11 @@ int main(int argc, char** argv) {
     // compute interpolation coefficients
     // in FEM-spaces for resulting waves
     Eigen::VectorXcd sol = tp::direct_second_kind::solve(
-            mesh, u_i_dir, u_i_neu, order, k, c_o, c_i);
+            mesh, u_i_dir, u_i_neu, order, k, c_o, c_i, rescale_neumann);
 
     // generate output file
     std::ofstream file_out;
-    file_out.open(argv[8], std::ofstream::out);
+    file_out.open(argv[9], std::ofstream::out);
     file_out.precision(10);
     file_out << std::scientific;
 

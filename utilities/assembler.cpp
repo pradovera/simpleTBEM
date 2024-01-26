@@ -9,8 +9,10 @@
  * /path/to/assembler \<shape flag\>
  *      \<shape parameters\> \<refraction inside\>
  *      \<wavenumber\> \<source angle\> \<number of panels\>
- *      \<order of quadrature rule\> \<matrix1outputfile\>
- *      \<matrix2outputfile\> \<vectoroutputfile\>
+ *      \<order of quadrature rule\>
+ *      \<whether to rescale neumann part by wavenumber\>
+ *      \<matrix1outputfile\> \<matrix2outputfile\>
+ *      \<vectoroutputfile\>
  * </tt>
  * SHAPE FLAG may be "circle", "square", "star", or "cshape".
  *   for "circle", the SHAPE PARAMETERS are the radius;
@@ -46,9 +48,12 @@ int main(int argc, char** argv) {
     unsigned numpanels = atoi(argv[6]);
     unsigned order = atoi(argv[7]);
 
+    // define whether to rescale neumann part by wavenumber
+    bool rescale_neumann = atoi(argv[8]) != 0;
+
     // define output filenames
-    std::string filename_matrix1 = argv[8];
-    std::string filename_matrix2 = argv[9];
+    std::string filename_matrix1 = argv[9];
+    std::string filename_matrix2 = argv[10];
     bool also_matrices = (filename_matrix1 != filename_matrix2);
 
     // define shape
@@ -107,15 +112,15 @@ int main(int argc, char** argv) {
 
     if (also_matrices) {
         // compute FEM matrices
-        std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrices = tp::direct_second_kind::matrix(mesh, order, k, c_o, c_i);
+        std::tuple<Eigen::MatrixXcd, Eigen::MatrixXcd> matrices = tp::direct_second_kind::matrix(mesh, order, k, c_o, c_i, rescale_neumann);
 
         // generate output files
         std::ofstream file_matrix1;
         std::ofstream file_matrix2;
-        file_matrix1.open(argv[8], std::ofstream::out);
+        file_matrix1.open(argv[9], std::ofstream::out);
         file_matrix1.precision(10);
         file_matrix1 << std::scientific;
-        file_matrix2.open(argv[9], std::ofstream::out);
+        file_matrix2.open(argv[10], std::ofstream::out);
         file_matrix2.precision(10);
         file_matrix2 << std::scientific;
 
@@ -141,11 +146,11 @@ int main(int argc, char** argv) {
     }
 
     // compute FEM vector
-    Eigen::VectorXcd vector = tp::direct_second_kind::vector(mesh, u_i_dir, u_i_neu);
+    Eigen::VectorXcd vector = tp::direct_second_kind::vector(mesh, u_i_dir, u_i_neu, k, rescale_neumann);
 
     // generate output file
     std::ofstream file_vector;
-    file_vector.open(argv[10], std::ofstream::out);
+    file_vector.open(argv[11], std::ofstream::out);
     file_vector.precision(10);
     file_vector << std::scientific;
 
