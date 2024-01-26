@@ -68,5 +68,5 @@ include(${PROJECT_SOURCE_DIR}/cmake/functions/Getcomplex_bessel.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/functions/Getarpackpp.cmake)
 
 # ADD SUBDIRECTORIES
-add_subdirectory(examples)
+add_subdirectory(utilities)
 add_subdirectory(source)

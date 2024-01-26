@@ -49,25 +49,29 @@ int main(int argc, char** argv) {
     std::vector<double> params;
     PanelVector panels;
     std::function<double(double, double)> normalAngle;
-    if (shape == "circle") {
+    if (shape == "circle" || shape == "square") { // single parameter
         params.push_back(atof(parameters.c_str()));
-        panels = buildCircle(params[0], numpanels);
-        normalAngle = normalCircle;
-    } else if (shape == "square") {
-        params.push_back(atof(parameters.c_str()));
-        panels = buildSquare(params[0], numpanels);
-        normalAngle = normalSquare;
-    } else if (shape == "star") {
+        if (shape == "circle") {
+            panels = buildCircle(params[0], numpanels);
+            normalAngle = normalCircle;
+        } else if (shape == "square") {
+            panels = buildSquare(params[0], numpanels);
+            normalAngle = normalSquare;
+        }
+    } else if (shape == "star" || shape == "cshape") { // double parameter
         std::istringstream parameterstream(parameters);
         std::string parameter;
         std::getline(parameterstream, parameter, '_');
         params.push_back(atof(parameter.c_str()));
         std::getline(parameterstream, parameter, '_');
         params.push_back(atof(parameter.c_str()));
-        panels = buildStar(params[0], params[1], numpanels);
-        normalAngle = [&] (double x1, double x2) {
-            return normalStar(params[0], params[1], x1, x2);
-        };
+        if (shape == "star") {
+            panels = buildStar(params[0], params[1], numpanels);
+            normalAngle = [&] (double x1, double x2) { return normalStar(params[0], params[1], x1, x2); };
+        } else if (shape == "cshape") {
+            panels = buildCShape(params[0], params[1], numpanels);
+            normalAngle = [&] (double x1, double x2) { return normalCShape(params[0], params[1], x1, x2); };
+        }
     }
 
     // define incoming wave exp(1i * k * ((c, s) . (x1, x2)))
