@@ -7,20 +7,25 @@
  * The script can be run as follows:
  * <tt>
  * /path/to/assembler \<shape flag\>
- *      \<shape parameters\> \<refraction inside\>
+ *      \<shape parameters\> \<squared refraction inside\>
  *      \<wavenumber\> \<source angle\> \<number of panels\>
  *      \<order of quadrature rule\>
  *      \<whether to rescale neumann part by wavenumber\>
  *      \<matrix1outputfile\> \<matrix2outputfile\>
  *      \<vectoroutputfile\>
  * </tt>
- * SHAPE FLAG may be "circle", "square", "star", or "cshape".
+ * SHAPE FLAG may be "circle", "square", "star", "cshape",
+ *                   "barbedcshape", or "kite".
  *   for "circle", the SHAPE PARAMETERS are the radius;
  *   for "square", the SHAPE PARAMETERS are the half side length;
  *   for "star", the SHAPE PARAMETERS are the inner and outer
  *               radius, separated by a "_";
  *   for "cshape", the SHAPE PARAMETERS are the side length and
  *                 inner radius, separated by a "_";
+ *   for "barbedcshape", the SHAPE PARAMETERS are the side length and
+ *                 inner radius, separated by a "_";
+ *   for "kite", the SHAPE PARAMETERS are the overhang and
+ *                 height, separated by a "_";
  *
  * This file is a part of the simpleTBEM library.
  */
@@ -71,7 +76,8 @@ int main(int argc, char** argv) {
             panels = buildSquare(params[0], numpanels);
             normalAngle = normalSquare;
         }
-    } else if (shape == "star" || shape == "cshape") { // double parameter
+    } else if (shape == "star" || shape == "cshape"
+            || shape == "barbedcshape" || shape == "kite") { // double parameter
         std::istringstream parameterstream(parameters);
         std::string parameter;
         std::getline(parameterstream, parameter, '_');
@@ -84,6 +90,12 @@ int main(int argc, char** argv) {
         } else if (shape == "cshape") {
             panels = buildCShape(params[0], params[1], numpanels);
             normalAngle = [&] (double x1, double x2) { return normalCShape(params[0], params[1], x1, x2); };
+        } else if (shape == "barbedcshape") {
+            panels = buildBarbedCShape(params[0], params[1], numpanels);
+            normalAngle = [&] (double x1, double x2) { return normalBarbedCShape(params[0], params[1], x1, x2); };
+        } else if (shape == "kite") {
+            panels = buildKite(params[0], params[1], numpanels);
+            normalAngle = [&] (double x1, double x2) { return normalKite(params[0], params[1], x1, x2); };
         }
     }
 
@@ -99,7 +111,7 @@ int main(int argc, char** argv) {
     auto u_i_neu = [&] (double x1, double x2) {
         double x = k * (cos(theta) * x1 + sin(theta) * x2);
         double normal_angle = normalAngle(x1, x2);
-        double w_dir = cos(theta) * cos(normal_angle) + sin(theta) * sin(normal_angle);
+        double w_dir = cos(theta - normal_angle);
         complex_t result = ii * k * complex_t(cos(x), sin(x)) * w_dir;
         return result;
     };

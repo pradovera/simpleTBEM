@@ -10,11 +10,18 @@
  *      \<shape parameters\> \<number of panels\>
  *      \<order of quadrature rule\> \<outputfile\>
  * </tt>
- * SHAPE FLAG may be "circle", "square", or "star".
+ * SHAPE FLAG may be "circle", "square", "star", "cshape",
+ *                   "barbedcshape", or "kite".
  *   for "circle", the SHAPE PARAMETERS are the radius;
  *   for "square", the SHAPE PARAMETERS are the half side length;
  *   for "star", the SHAPE PARAMETERS are the inner and outer
  *               radius, separated by a "_";
+ *   for "cshape", the SHAPE PARAMETERS are the side length and
+ *                 inner radius, separated by a "_";
+ *   for "barbedcshape", the SHAPE PARAMETERS are the side length and
+ *                 inner radius, separated by a "_";
+ *   for "kite", the SHAPE PARAMETERS are the overhang and
+ *                 height, separated by a "_";
  *
  * This file is a part of the simpleTBEM library.
  */
@@ -43,7 +50,8 @@ int main(int argc, char** argv) {
         } else if (shape == "square") {
             panels = buildSquare(params[0], numpanels);
         }
-    } else if (shape == "star" || shape == "cshape") { // double parameter
+    } else if (shape == "star" || shape == "cshape"
+            || shape == "barbedcshape" || shape == "kite") { // double parameter
         std::istringstream parameterstream(parameters);
         std::string parameter;
         std::getline(parameterstream, parameter, '_');
@@ -54,6 +62,10 @@ int main(int argc, char** argv) {
             panels = buildStar(params[0], params[1], numpanels);
         } else if (shape == "cshape") {
             panels = buildCShape(params[0], params[1], numpanels);
+        } else if (shape == "barbedcshape") {
+            panels = buildBarbedCShape(params[0], params[1], numpanels);
+        } else if (shape == "kite") {
+            panels = buildKite(params[0], params[1], numpanels);
         }
     }
 
